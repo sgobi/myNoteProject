@@ -89,7 +89,7 @@ $request->merge(['user_id'=>Auth::id()]);
 
         if($note->user_id!==Auth::id()){
 
-            return redirct()->route('notes.index')->with('error','You cant Eligible to Update');
+            return redirect()->route('notes.index')->with('error','You cant Eligible to Update');
         }
 
               // Validate the incoming request data
@@ -111,10 +111,17 @@ $request->merge(['user_id'=>Auth::id()]);
     {
         if($note->user_id!==Auth::id()){
 
-            return redirct()->route('notes.index')->with('error','You cant Eligible to Delete');
+            return redirect()->route('notes.index')->with('error','You cant Eligible to Delete');
         }
-        $note->delete();
-        return redirect()->route('notes.index')
-        ->with('success', 'Note Deleted successfully.');
+       
+
+        try {
+            $note->delete();
+            return redirect()->route('notes.index')
+                ->with('success', 'Note Deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('notes.index')
+                ->with('error', 'There was a problem deleting the note.');
+        }
     }
 }

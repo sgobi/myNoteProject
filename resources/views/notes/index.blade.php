@@ -1,14 +1,17 @@
 @extends('notes.layouts.layout')
-
 @section('content')
 
 <div class="card mt-5">
     <h2 class="card-header">Laravel CRUD Example</h2>
     <div class="card-body">
         
-        @if(session('success'))
-            <div class="alert alert-success" role="alert">{{ session('success') }}</div>
-        @endif
+    @if(session('success'))
+    <div class="alert alert-success" role="alert">{{ session('success') }}</div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+@endif
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <a class="btn btn-success btn-sm" href="{{ route('notes.create') }}"><i class="fa fa-plus"></i> Create New Note</a>
