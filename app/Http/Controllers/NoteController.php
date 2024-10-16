@@ -1,12 +1,27 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Note;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NoteController extends Controller
 {
+
+    public function _construct(){
+
+
+    }
+
+
+    public function handle($request, Closure $next) {
+        // Middleware should be defined here
+        $this->middleware('auth');
+        return $next($request);
+    }
+    
+    
+
     /**
      * Display a listing of the resource.
      */
@@ -38,7 +53,11 @@ class NoteController extends Controller
         'title' => 'required|string|max:255', // Adjust validation rules as necessary
         'content' => 'required|string', // Assuming you have a 'content' field
     ]);
-    $validatedData['user_id'] = 1; // Replace 1 with the appropriate user ID if dynamic
+
+
+$request->merge(['user_id'=>Auth::id()]);
+
+    $validatedData['user_id'] = Auth::id(); // Replace 1 with the appropriate user ID if dynamic
     // Create a new note using the validated data
     Note::create($validatedData);
 
@@ -67,6 +86,12 @@ class NoteController extends Controller
      */
     public function update(Request $request, Note $note)
     {
+
+        if($note->user_id!==Auth::id()){
+
+            return redirct()->route('notes.index')->with('error','You cant Eligible to Update');
+        }
+
               // Validate the incoming request data
     $validatedData = $request->validate([
         'title' => 'required|string|max:255', // Adjust validation rules as necessary
@@ -84,6 +109,10 @@ class NoteController extends Controller
      */
     public function destroy(Note $note)
     {
+        if($note->user_id!==Auth::id()){
+
+            return redirct()->route('notes.index')->with('error','You cant Eligible to Delete');
+        }
         $note->delete();
         return redirect()->route('notes.index')
         ->with('success', 'Note Deleted successfully.');
